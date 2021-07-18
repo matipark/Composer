@@ -1,3 +1,6 @@
+
+#%%
+
 import sys, random, os
 import numpy as np
 from matplotlib import pyplot as plt
@@ -5,6 +8,10 @@ import pydot
 import cv2
 import util
 import midi
+
+
+#%%
+
 
 NUM_EPOCHS = 2000
 LR = 0.001
@@ -17,7 +24,7 @@ NUM_RAND_SONGS = 10
 DO_RATE = 0.1
 BN_M = 0.9
 VAE_B1 = 0.02
-VAE_B2 = 0.1
+VAE_B2 = 0.1 
 
 BATCH_SIZE = 350
 MAX_LENGTH = 16
@@ -50,15 +57,25 @@ def save_config():
 ###################################
 #  Load Keras
 ###################################
-print "Loading Keras..."
+print ('Loading Keras...')
 import os, math
-os.environ['THEANORC'] = "./gpu.theanorc"
-os.environ['KERAS_BACKEND'] = "theano"
+os.environ['THEANORC'] = './gpu.theanorc'
+os.environ['KERAS_BACKEND'] = 'theano'
+
+
+
+
+
+#%%
+
 import theano
-print "Theano Version: " + theano.__version__
+print ('Theano Version: ' + theano.__version__)
 
 import keras
-print "Keras Version: " + keras.__version__
+print ("Keras Version: " + keras.__version__)
+
+#%%
+
 from keras.layers import Input, Dense, Activation, Dropout, Flatten, Reshape, Permute, RepeatVector, ActivityRegularization, TimeDistributed, Lambda, SpatialDropout1D
 from keras.layers.convolutional import Conv1D, Conv2D, Conv2DTranspose, UpSampling2D, ZeroPadding2D
 from keras.layers.embeddings import Embedding
@@ -79,6 +96,11 @@ from keras import regularizers
 from keras.engine.topology import Layer
 K.set_image_data_format('channels_first')
 
+
+#%%
+
+
+
 #Fix the random seed so that training comparisons are easier to make
 np.random.seed(0)
 random.seed(0)
@@ -91,7 +113,7 @@ if WRITE_HISTORY:
 ###################################
 #  Load Dataset
 ###################################
-print "Loading Data..."
+print ("Loading Data...")
 y_samples = np.load('samples.npy')
 y_lengths = np.load('lengths.npy')
 num_samples = y_samples.shape[0]
@@ -100,7 +122,7 @@ print "Loaded " + str(num_samples) + " samples from " + str(num_songs) + " songs
 print np.sum(y_lengths)
 assert(np.sum(y_lengths) == num_samples)
 
-print "Padding Songs..."
+print ("Padding Songs...")
 x_shape = (num_songs * NUM_OFFSETS, 1)
 y_shape = (num_songs * NUM_OFFSETS, MAX_LENGTH) + y_samples.shape[1:]
 x_orig = np.expand_dims(np.arange(x_shape[0]), axis=-1)
@@ -144,10 +166,10 @@ midi.samples_to_midi(y_test_song[0], 'gt.mid', 16)
 #  Create Model
 ###################################
 if CONTINUE_TRAIN or PLAY_ONLY:
-	print "Loading Model..."
+	print ("Loading Model...")
 	model = load_model('model.h5', custom_objects=custom_objects)
 else:
-	print "Building Model..."
+	print ("Building Model...")
 
 	if USE_EMBEDDING:
 		x_in = Input(shape=x_shape[1:])
@@ -221,7 +243,7 @@ else:
 ###################################
 #  Train
 ###################################
-print "Compiling SubModels..."
+print ("Compiling SubModels...")
 func = K.function([model.get_layer('encoder').input, K.learning_phase()],
 				  [model.layers[-1].output])
 enc = Model(inputs=model.input, outputs=model.get_layer('pre_encoder').output)
