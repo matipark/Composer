@@ -118,8 +118,8 @@ y_samples = np.load('samples.npy')
 y_lengths = np.load('lengths.npy')
 num_samples = y_samples.shape[0]
 num_songs = y_lengths.shape[0]
-print "Loaded " + str(num_samples) + " samples from " + str(num_songs) + " songs."
-print np.sum(y_lengths)
+print ("Loaded " + str(num_samples) + " samples from " + str(num_songs) + " songs.")
+print (np.sum(y_lengths))
 assert(np.sum(y_lengths) == num_samples)
 
 print ("Padding Songs...")
