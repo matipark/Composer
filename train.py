@@ -252,7 +252,7 @@ rand_vecs = np.random.normal(0.0, 1.0, (NUM_RAND_SONGS, PARAM_SIZE))
 np.save('rand.npy', rand_vecs)
 
 def make_rand_songs(write_dir, rand_vecs):
-	for i in xrange(rand_vecs.shape[0]):
+	for i in range(rand_vecs.shape[0]):
 		x_rand = rand_vecs[i:i+1]
 		y_song = func([x_rand, 0])[0]
 		midi.samples_to_midi(y_song[0], write_dir + 'rand' + str(i) + '.mid', 16, 0.25)
@@ -269,8 +269,8 @@ def make_rand_songs_normalized(write_dir, rand_vecs):
 	u, s, v = np.linalg.svd(x_cov)
 	e = np.sqrt(s)
 
-	print "Means: ", x_mean[:6]
-	print "Evals: ", e[:6]
+	print ("Means: ", x_mean[:6])
+	print ("Evals: ", e[:6])
 	
 	np.save(write_dir + 'means.npy', x_mean)
 	np.save(write_dir + 'stds.npy', x_stds)
@@ -304,7 +304,7 @@ def make_rand_songs_normalized(write_dir, rand_vecs):
 	plt.savefig(write_dir + 'stds.png')
 
 if PLAY_ONLY:
-	print "Generating Songs..."
+	print ("Generating Songs...")
 	make_rand_songs_normalized('', rand_vecs)
 	for i in xrange(20):
 		x_test_song = x_train[i:i+1]
@@ -312,19 +312,19 @@ if PLAY_ONLY:
 		midi.samples_to_midi(y_song, 'gt' + str(i) + '.mid', 16)
 	exit(0)
 		  
-print "Training..."
+print ("Training...")
 save_config()
 train_loss = []
 ofs = 0
 
-for iter in xrange(NUM_EPOCHS):
+for iter in range(NUM_EPOCHS):
 	if USE_EMBEDDING:
 		history = model.fit(x_train, y_train, batch_size=BATCH_SIZE, epochs=1)
 	else:
 		cur_ix = 0
-		for i in xrange(num_songs):
+		for i in range(num_songs):
 			end_ix = cur_ix + y_lengths[i]
-			for j in xrange(MAX_LENGTH):
+			for j in range(MAX_LENGTH):
 				k = (j + ofs) % (end_ix - cur_ix)
 				y_train[i,j] = y_samples[cur_ix + k]
 			cur_ix = end_ix
@@ -335,7 +335,7 @@ for iter in xrange(NUM_EPOCHS):
 
 	loss = history.history["loss"][-1]
 	train_loss.append(loss)
-	print "Train Loss: " + str(train_loss[-1])
+	print ("Train Loss: " + str(train_loss[-1]))
 	
 	if WRITE_HISTORY:
 		plotScores(train_loss, 'History/Scores.png', True)
@@ -354,7 +354,7 @@ for iter in xrange(NUM_EPOCHS):
 			model.save('History/model.h5')
 		else:
 			model.save('model.h5')
-		print "Saved"
+		print ("Saved")
 
 		if USE_EMBEDDING:
 			y_song = model.predict(x_test_song, batch_size=BATCH_SIZE)[0]
@@ -365,4 +365,4 @@ for iter in xrange(NUM_EPOCHS):
 
 		make_rand_songs_normalized(write_dir, rand_vecs)
 
-print "Done"
+print ("Done")
