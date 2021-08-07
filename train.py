@@ -128,11 +128,11 @@ y_shape = (num_songs * NUM_OFFSETS, MAX_LENGTH) + y_samples.shape[1:]
 x_orig = np.expand_dims(np.arange(x_shape[0]), axis=-1)
 y_orig = np.zeros(y_shape, dtype=y_samples.dtype)
 cur_ix = 0
-for i in xrange(num_songs):
-	for ofs in xrange(NUM_OFFSETS):
+for i in range(num_songs):
+	for ofs in range(NUM_OFFSETS):
 		ix = i*NUM_OFFSETS + ofs
 		end_ix = cur_ix + y_lengths[i]
-		for j in xrange(MAX_LENGTH):
+		for j in range(MAX_LENGTH):
 			k = (j + ofs) % (end_ix - cur_ix)
 			y_orig[ix,j] = y_samples[cur_ix + k]
 	cur_ix = end_ix
@@ -180,19 +180,19 @@ else:
 		x_in = Input(shape=y_shape[1:])
 		print (None,) + y_shape[1:]
 		x = Reshape((y_shape[1], -1))(x_in)
-		print K.int_shape(x)
+		print (K.int_shape(x))
 		
 		x = TimeDistributed(Dense(2000, activation='relu'))(x)
-		print K.int_shape(x)
+		print (K.int_shape(x))
 		
 		x = TimeDistributed(Dense(200, activation='relu'))(x)
-		print K.int_shape(x)
+		print (K.int_shape(x))
 
 		x = Flatten()(x)
-		print K.int_shape(x)
+		print (K.int_shape(x))
 
 		x = Dense(1600, activation='relu')(x)
-		print K.int_shape(x)
+		print (K.int_shape(x))
 		
 		if USE_VAE:
 			z_mean = Dense(PARAM_SIZE)(x)
@@ -201,35 +201,35 @@ else:
 		else:
 			x = Dense(PARAM_SIZE)(x)
 			x = BatchNormalization(momentum=BN_M, name='pre_encoder')(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 	
 	x = Dense(1600, name='encoder')(x)
 	x = BatchNormalization(momentum=BN_M)(x)
 	x = Activation('relu')(x)
 	if DO_RATE > 0:
 		x = Dropout(DO_RATE)(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 
 	x = Dense(MAX_LENGTH * 200)(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 	x = Reshape((MAX_LENGTH, 200))(x)
 	x = TimeDistributed(BatchNormalization(momentum=BN_M))(x)
 	x = Activation('relu')(x)
 	if DO_RATE > 0:
 		x = Dropout(DO_RATE)(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 
 	x = TimeDistributed(Dense(2000))(x)
 	x = TimeDistributed(BatchNormalization(momentum=BN_M))(x)
 	x = Activation('relu')(x)
 	if DO_RATE > 0:
 		x = Dropout(DO_RATE)(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 
 	x = TimeDistributed(Dense(y_shape[2] * y_shape[3], activation='sigmoid'))(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 	x = Reshape((y_shape[1], y_shape[2], y_shape[3]))(x)
-	print K.int_shape(x)
+	print (K.int_shape(x))
 	
 	if USE_VAE:
 		model = Model(x_in, x)
@@ -366,3 +366,5 @@ for iter in range(NUM_EPOCHS):
 		make_rand_songs_normalized(write_dir, rand_vecs)
 
 print ("Done")
+
+# %%
